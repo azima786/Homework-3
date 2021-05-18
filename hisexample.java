@@ -1,10 +1,7 @@
 package Homework2;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

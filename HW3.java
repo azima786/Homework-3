@@ -1,11 +1,10 @@
 package Homework2;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.Random;
-
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,28 +14,47 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 
 public class HW3 {
 	
-	WebDriver driver; 
+WebDriver driver; 
 String browser;
+String CompanyName;
+String Name;
+String email;
+String phone; 
+String zip;
+String address;
+String state;
+String city;
 
-@BeforeClass
+@BeforeTest
 public void readHW() {
+	Properties property = new Properties();
 	
 	//Input Stream, Buffer Reader, Scanner, File Reader - Class that can help us read any file
 	
 	try{
 		
-		FileReader inputs = new FileReader("src\\main\\java\\Homework2\\config.properties");
-		Properties property = new Properties();
+		InputStream inputs = new FileInputStream("data\\config.properties");
+		
 property.load(inputs);
-	System.out.println(property.getProperty("browser"));
-	property.getProperty("browser");
 	
+	browser = property.getProperty("browser");
+	CompanyName = property.getProperty("CompanyName");
+	Name = property.getProperty("Name");
+	email = property.getProperty("email");
+	phone = property.getProperty("phone");
+	zip = property.getProperty("zip");
+	address = property.getProperty("address");
+	state = property.getProperty("state");
+	city = property.getProperty("city");
 	}
 	
 	catch(IOException e){
@@ -44,23 +62,25 @@ property.load(inputs);
 	}
 	}
 
-@BeforeMethod
+@BeforeClass
 public void start() {
 	if(browser.equalsIgnoreCase("chrome")) {
 		System.setProperty("webdriver.chrome.driver", "drivers\\chromedriver.exe");
 	driver = new ChromeDriver();}
 		
-	else if (browser==("FireFox")) 
+	else if (browser.equalsIgnoreCase("FireFox")) 
 	{System.setProperty("webdriver.gecko.driver", "drivers\\geckodriver.exe");
 		driver = new FirefoxDriver();}
 }
 
-@Test
-public void loginTest() {
-	System.setProperty("webdriver.chrome.driver", "drivers\\chromedriver.exe");
-	driver = new ChromeDriver();
+@BeforeMethod
+public void startbrowser() {
+
 
 	driver.get("https://techfios.com/billing/?ng=login/");
+	driver.manage().deleteAllCookies();
+	driver.manage().window().maximize();
+	
 	
 	String login = "demo@techfios.com";
 	String password = "abc123";
@@ -75,8 +95,11 @@ public void loginTest() {
 	driver.findElement(Password).sendKeys(password);
 	driver.findElement(Login).click();
 	
-	Assert.assertEquals(driver.getTitle(), "Dashboard- iBilling", "Wrong Page!!!!");
+	Assert.assertEquals(driver.getTitle(), "Dashboard- iBilling", "Wrong Page!!!!");}
 	
+@Test
+public void Test() {
+	//By Class
 	By Customers = By.xpath("//span[contains(text(), \"Customers\")]");
 	By AddCustomer = By.xpath("//a[contains(text(), \"Add Customer\")]");
 	By FullName = By.xpath("//input[@id=\"account\"]");
@@ -90,33 +113,20 @@ public void loginTest() {
 	By ListCustomers = By.xpath("//a[contains(text(),\"List Customers\")]");
 	By Company = By.xpath("//select[@id=\"cid\"]");
 	
-	String Name = "Jim Bryan";
-	String CompanyName = "Google";
-		
-	Random rdn = new Random();
-	int number = rdn.nextInt(999);
-	
-	String email = "abc@techfios.com";
-	String phone = "205-7965";
-	String address = "121 Miguels Rd";
-	String city = "Plano";
-	String state = "TX";
-	String zip = "75056";
-	
+	//Add Customer
 	driver.findElement(Customers).click();
-	
 	WaitforElement(driver, 5, AddCustomer);
 	driver.findElement(AddCustomer).click();
 
+int number =	random();
 	WaitforElement(driver, 5, FullName);
 	driver.findElement(FullName).sendKeys(Name + number);
 String name = Name + number;	
 	
-	Select sel = new Select(driver.findElement(Company));
-	sel.selectByVisibleText(CompanyName);
+select(Company, CompanyName);
 
-	driver.findElement(Email).sendKeys(number + email);
-driver.findElement(Phone).sendKeys (phone + number);
+driver.findElement(Email).sendKeys(number + email);
+driver.findElement(Phone).sendKeys(number + phone);
 driver.findElement(Address).sendKeys(address);
 driver.findElement(City).sendKeys(city);
 driver.findElement(State).sendKeys(state);
@@ -125,16 +135,22 @@ driver.findElement(Submit).click();
 
 driver.navigate().back();
 
-WaitforElement(driver, 5, ListCustomers);
+WaitforElement(driver, 10, ListCustomers);
 driver.findElement(ListCustomers).click();
 
 WebElement find = driver.findElement(By.xpath("//table/tbody/tr/td[3]/a[contains(text(),\"Jim\")]"));
-WaitforElement(driver, 5, ListCustomers);
+WaitforElement(driver, 10, ListCustomers);
 
 Assert.assertEquals(find.getText(), name, "Is not displayed");
 
 }
 
+
+private int random() {
+	Random number = new Random();
+	return number.nextInt(999);
+	
+}
 
 private void WaitforElement(WebDriver driver2, int TimeInSeconds, By locator) {
 	WebDriverWait wait = new WebDriverWait(driver, TimeInSeconds);
@@ -142,9 +158,15 @@ private void WaitforElement(WebDriver driver2, int TimeInSeconds, By locator) {
 	
 }
 
-private void teardown() {
-driver.quit();
+private void select(By locator, String CompanyName) {
+	Select sel = new Select(driver.findElement(locator));
+	sel.selectByVisibleText(CompanyName);
+}
+
+@AfterTest
+public void end() {
 driver.close();
+driver.quit();
 }
 
 }

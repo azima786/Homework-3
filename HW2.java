@@ -1,12 +1,7 @@
 package Homework2;
 
-
-
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-import org.junit.Before;
-import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,14 +9,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import junit.framework.Assert;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class HW2<WebElementWait> {
 
 	WebDriver driver;
 
-	@Before
+	@BeforeTest
 	public void start() throws InterruptedException {
 		System.setProperty("webdriver.chrome.driver", "drivers\\chromedriver.exe");
 		driver = new ChromeDriver();
@@ -41,11 +37,9 @@ WebElement Dashboard = driver.findElement(By.xpath("//h2[contains(text(),' Dashb
 Assert.assertEquals(Dashboard.getText(), "Dashboard");	
 driver.findElement(By.xpath("//span[contains(text(),'Customers')]")).click();
 driver.findElement(By.xpath("//*[@id=\"side-menu\"]/li[3]/ul/li[1]/a")).click();
-
 driver.findElement(By.xpath("//input[@id='account']")).sendKeys("jim brown");
 
 WebElement company = driver.findElement(By.xpath(("//select[@id='cid']")));
-
 
 	Select sel = new Select(company);
 	sel.selectByVisibleText("Google");
@@ -74,21 +68,13 @@ Sele.selectByVisibleText("AUG 2020");
 
 driver.findElement(By.xpath("//input[@id='password']")).sendKeys("123456");
 driver.findElement(By.xpath("//input[@id='cpassword']")).sendKeys("123456");
-
 driver.findElement(By.xpath("//div[@class='toggle-group']"));
-
-
 driver.findElement(By.xpath("//button[@id='submit']")).click();
-
-
-
 driver.findElement(By.xpath("//a[contains(text(),'List Customers')]"));
-
-
 
 Thread.sleep(2000);
 WebDriverWait wait = new WebDriverWait(driver,10);
-wait.until(ExpectedConditions.visibilityOfAllElements(Customer));
+
 
 Thread.sleep(2000);
 		
