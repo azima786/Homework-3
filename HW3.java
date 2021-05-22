@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,7 +16,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -23,6 +24,7 @@ import org.testng.annotations.Test;
 
 public class HW3 {
 	
+
 WebDriver driver; 
 String browser;
 String CompanyName;
@@ -76,8 +78,8 @@ public void start() {
 @BeforeMethod
 public void startbrowser() {
 
-
-	driver.get("https://techfios.com/billing/?ng=login/");
+driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+driver.get("https://techfios.com/billing/?ng=login/");
 	driver.manage().deleteAllCookies();
 	driver.manage().window().maximize();
 	
@@ -135,27 +137,23 @@ driver.findElement(Submit).click();
 
 driver.navigate().back();
 
-WaitforElement(driver, 10, ListCustomers);
+WaitforElement(driver, 15, ListCustomers);
 driver.findElement(ListCustomers).click();
 
 WebElement find = driver.findElement(By.xpath("//table/tbody/tr/td[3]/a[contains(text(),\"Jim\")]"));
-WaitforElement(driver, 10, ListCustomers);
+WaitforElement(driver, 15, ListCustomers);
 
 Assert.assertEquals(find.getText(), name, "Is not displayed");
-
 }
-
 
 private int random() {
 	Random number = new Random();
 	return number.nextInt(999);
-	
 }
 
 private void WaitforElement(WebDriver driver2, int TimeInSeconds, By locator) {
 	WebDriverWait wait = new WebDriverWait(driver, TimeInSeconds);
 	wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
-	
 }
 
 private void select(By locator, String CompanyName) {
@@ -163,7 +161,7 @@ private void select(By locator, String CompanyName) {
 	sel.selectByVisibleText(CompanyName);
 }
 
-@AfterTest
+//@AfterTest
 public void end() {
 driver.close();
 driver.quit();
